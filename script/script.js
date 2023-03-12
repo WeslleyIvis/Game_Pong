@@ -5,21 +5,41 @@ if (canvas instanceof HTMLCanvasElement) {
     const zelda = {
         image: new Image(),
         srcImage: './link.png',
-        cutX: 0,
-        cutY: 0,
-        widthCut: 120,
-        heightCut: 130,
-        WidthSprite: 0,
-        posX: 0,
-        posY: 0,
-        widthImage: 150,
-        heigthImage: 150,
+        sx: 0,
+        sy: 0,
+        swidth: 0,
+        sheight: 0,
+        sprit: 1,
+        xSprites: 10,
+        ySprites: 8,
+        roadMapSprit: [],
+        x: 0,
+        y: 0,
+        width: 150,
+        height: 150,
     };
-    function creatPersonagem({ image, srcImage, cutX, cutY, widthCut, heightCut, posX, posY, widthImage, heigthImage, ...personagem }) {
-        image.src = srcImage;
-        console.log(image.width);
-        image.addEventListener('load', () => {
-            ctx?.drawImage(image, cutX, cutY, widthCut, heightCut, posX, posY, widthImage, heigthImage);
+    function mapSprit({ ...sprit }) {
+        sprit.image.src = sprit.srcImage;
+        sprit.image.addEventListener('load', () => {
+            for (let y = 0; y < sprit.ySprites; y++) {
+                sprit.roadMapSprit.push([]);
+                for (let x = 0; x < sprit.xSprites; x++) {
+                    sprit.roadMapSprit[y][x] = [sprit.image.width / sprit.xSprites * x];
+                    sprit.roadMapSprit[y][x].push((sprit.image.height / sprit.ySprites) * y);
+                }
+            }
+        });
+        return sprit.roadMapSprit;
+    }
+    mapSprit(zelda);
+    let x = 0;
+    function creatPersonagem({ srcImage, sx, sy, swidth, sheight, x, y, width, height, ...personagem }) {
+        personagem.image.src = srcImage;
+        personagem.image.addEventListener('load', () => {
+            swidth = personagem.image.width / personagem.xSprites;
+            sheight = personagem.image.height / personagem.ySprites;
+            personagem.sprit = sheight * 0;
+            ctx?.drawImage(personagem.image, personagem.roadMapSprit[4][0][0], personagem.roadMapSprit[4][0][1], swidth, sheight, x, y, width, height);
         });
     }
     creatPersonagem(zelda);

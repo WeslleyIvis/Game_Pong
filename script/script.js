@@ -1,56 +1,92 @@
 "use strict";
 const canvas = document.getElementById("screen");
-if (canvas instanceof HTMLCanvasElement) {
-    const ctx = canvas.getContext('2d');
-    const zelda = {
-        image: new Image(),
-        srcImage: './link.png',
-        sx: 0,
-        sy: 0,
-        swidth: 0,
-        sheight: 0,
-        sprit: 1,
-        xSprites: 10,
-        ySprites: 8,
-        roadMapSprit: [],
-        x: 0,
-        y: 0,
-        width: 150,
-        height: 150,
-    };
-    function mapSprit({ ...sprit }) {
-        sprit.image.src = sprit.srcImage;
-        sprit.image.addEventListener('load', () => {
-            for (let y = 0; y < sprit.ySprites; y++) {
-                sprit.roadMapSprit.push([]);
-                for (let x = 0; x < sprit.xSprites; x++) {
-                    sprit.roadMapSprit[y][x] = [sprit.image.width / sprit.xSprites * x];
-                    sprit.roadMapSprit[y][x].push((sprit.image.height / sprit.ySprites) * y);
-                }
+class Canvas {
+    screen;
+    ctx;
+    constructor(screen = "screen") {
+        this.screen = document.getElementById("screen");
+        if (this.screen instanceof HTMLCanvasElement) {
+            this.ctx = this.screen.getContext('2d');
+        }
+    }
+}
+const canva = new Canvas("screen");
+class Character extends Canvas {
+    width;
+    height;
+    color;
+    x;
+    y;
+    vel;
+    movent;
+    constructor(width = 20, height = 20, color = '#CCC', vel = 2) {
+        super();
+        this.width = width;
+        this.height = height;
+        this.color = color;
+        this.x = 0;
+        this.y = 0;
+        this.vel = vel;
+        this.movent = {
+            left: false,
+            right: false,
+            up: false,
+            down: false,
+        };
+        const a = true;
+    }
+    handleEvent() {
+        this.write();
+        window.addEventListener('keydown', ({ key }) => {
+            console.log(key);
+            if (key == "ArrowRight") {
+                this.movent.right = true;
+            }
+            else if (key == "ArrowLeft") {
+                this.movent.left = true;
+            }
+            if (key == "ArrowUp") {
+                this.movent.up = true;
+            }
+            else if (key == "ArrowDown") {
+                this.movent.down = true;
             }
         });
-        return sprit.roadMapSprit;
-    }
-    mapSprit(zelda);
-    let x = 0;
-    function creatPersonagem({ srcImage, sx, sy, swidth, sheight, x, y, width, height, ...personagem }) {
-        personagem.image.src = srcImage;
-        personagem.image.addEventListener('load', () => {
-            swidth = personagem.image.width / personagem.xSprites;
-            sheight = personagem.image.height / personagem.ySprites;
-            personagem.sprit = sheight * 0;
-            console.log(personagem.roadMapSprit[7][0]);
-            const time = setInterval(() => {
-                ctx?.clearRect(0, 0, 200, 200);
-                x++;
-                if (x >= personagem.roadMapSprit[0].length) {
-                    x = 0;
-                    clearInterval(time);
-                }
-                ctx?.drawImage(personagem.image, personagem.roadMapSprit[7][x][0], personagem.roadMapSprit[7][0][1], swidth, sheight, x, y, width, height);
-            }, 100);
+        window.addEventListener('keyup', ({ key }) => {
+            if (key == "ArrowRight") {
+                this.movent.right = false;
+            }
+            else if (key == "ArrowLeft") {
+                this.movent.left = false;
+            }
+            if (key == "ArrowUp") {
+                this.movent.up = false;
+            }
+            else if (key == "ArrowDown") {
+                this.movent.down = false;
+            }
         });
+        this.reenderUser();
     }
-    creatPersonagem(zelda);
+    write() {
+        if (this.screen instanceof HTMLCanvasElement) {
+            this.ctx?.clearRect(0, 0, this.screen.width, this.screen.height);
+            this.ctx?.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    reenderUser() {
+        if (this.movent.up)
+            this.y -= this.vel;
+        if (this.movent.down)
+            this.y += this.vel;
+        if (this.movent.left)
+            this.x -= this.vel;
+        if (this.movent.right)
+            this.x += this.vel;
+        requestAnimationFrame(this.reenderUser.bind(this));
+        this.write();
+    }
 }
+const play = new Character(30, 100, "green", 15);
+play.handleEvent();
 //# sourceMappingURL=script.js.map

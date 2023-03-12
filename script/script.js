@@ -39,7 +39,16 @@ if (canvas instanceof HTMLCanvasElement) {
             swidth = personagem.image.width / personagem.xSprites;
             sheight = personagem.image.height / personagem.ySprites;
             personagem.sprit = sheight * 0;
-            ctx?.drawImage(personagem.image, personagem.roadMapSprit[4][0][0], personagem.roadMapSprit[4][0][1], swidth, sheight, x, y, width, height);
+            console.log(personagem.roadMapSprit[7][0]);
+            const time = setInterval(() => {
+                ctx?.clearRect(0, 0, 200, 200);
+                x++;
+                if (x >= personagem.roadMapSprit[0].length) {
+                    x = 0;
+                    clearInterval(time);
+                }
+                ctx?.drawImage(personagem.image, personagem.roadMapSprit[7][x][0], personagem.roadMapSprit[7][0][1], swidth, sheight, x, y, width, height);
+            }, 100);
         });
     }
     creatPersonagem(zelda);

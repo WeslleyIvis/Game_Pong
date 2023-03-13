@@ -18,13 +18,13 @@ class Character extends Canvas {
     y;
     vel;
     movent;
-    constructor(width = 20, height = 20, color = '#CCC', vel = 2) {
+    constructor(x, y, width = 20, height = 20, color = '#CCC', vel = 2) {
         super();
         this.width = width;
         this.height = height;
         this.color = color;
-        this.x = 100;
-        this.y = 0;
+        this.x = x;
+        this.y = y;
         this.vel = vel;
         this.movent = {
             left: false,
@@ -55,16 +55,17 @@ class Character extends Canvas {
         this.reenderUser();
     }
     write() {
-        if (this.screen instanceof HTMLCanvasElement) {
-            this.ctx?.clearRect(0, 0, this.screen.width, this.screen.height);
-            this.ctx?.fillRect(this.x, this.y, this.width, this.height);
-        }
+        this.ctx?.fillRect(this.x, this.y, this.width, this.height);
     }
     reenderUser() {
-        if (this.movent.up && this.y)
+        if (this.movent.up && this.y >= 0)
             this.y -= this.vel;
         if (this.movent.down && this.y <= this.screen.height - this.height)
             this.y += this.vel;
+        this.write();
+    }
+    robotIA(direct) {
+        this.y = direct;
         this.write();
     }
 }
@@ -76,15 +77,21 @@ class Elipse extends Canvas {
     direcX;
     direcY;
     vel;
-    constructor(area = 50, vel = 20, color = "black") {
+    time;
+    incVel;
+    aux;
+    constructor(area = 50, vel = 20, color = "black", intervalIncrease = false, increaseVel = 5, time = 5000) {
         super();
         this.area = area;
         this.color = color;
         this.x = this.screen.width / 2 - this.area;
         this.y = this.screen.height / 2 - this.area;
         this.vel = vel;
+        this.time = time;
+        this.incVel = increaseVel;
         this.direcX = Math.floor(Math.random() * this.vel);
         this.direcY = Math.floor(Math.random() * this.vel);
+        this.aux = intervalIncrease;
     }
     write() {
         if (this.ctx instanceof CanvasRenderingContext2D) {
@@ -96,6 +103,9 @@ class Elipse extends Canvas {
     }
     move() {
         this.write();
+        if (this.aux) {
+            this.increaseVel();
+        }
         this.x += this.direcX;
         this.y += this.direcY;
         if (this.x <= 0)
@@ -107,23 +117,33 @@ class Elipse extends Canvas {
         if (this.x + this.area * 2 >= this.screen.width)
             this.direcX = Math.floor(-(Math.random() * this.vel));
     }
+    increaseVel() {
+        const increase = setInterval(() => {
+            this.vel += this.incVel;
+        }, this.time);
+        this.aux = false;
+    }
 }
-class AnimationGame {
+class ControllerGame {
     play;
+    robot;
     elipse;
     constructor() {
-        this.play = new Character(30, 200, "blue", 15);
-        this.elipse = new Elipse();
+        this.play = new Character(30, 350, 30, 200, "blue", 15);
+        this.elipse = new Elipse(undefined, undefined, undefined, true, 1, 10000);
+        this.robot = new Character(1300, 350, 30, 200, "blue", 15);
     }
-    anima() {
+    reenderScreen() {
+        this.play.ctx?.clearRect(0, 0, this.play.screen.width, this.play.screen.height);
         this.play.handleEvent();
+        this.robot.robotIA(this.elipse.y);
         this.elipse.move();
         this.collision(this.play, this.elipse);
-        requestAnimationFrame(this.anima.bind(this));
+        requestAnimationFrame(this.reenderScreen.bind(this));
     }
-    collision(play, ball) {
+    collision(play, enemy) {
     }
 }
-const control = new AnimationGame();
-control.anima();
+const control = new ControllerGame();
+control.reenderScreen();
 //# sourceMappingURL=script.js.map

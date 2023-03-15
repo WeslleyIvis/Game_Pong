@@ -23,7 +23,7 @@ class Character extends Canvas {
         this.width = width;
         this.height = height;
         this.color = color;
-        this.x = x;
+        this.x = this.screen.width * x / 100;
         this.y = y;
         this.vel = vel;
         this.movent = {
@@ -108,14 +108,18 @@ class Elipse extends Canvas {
         }
         this.x += this.direcX;
         this.y += this.direcY;
-        if (this.x <= 0)
-            this.direcX = Math.floor(Math.random() * this.vel);
-        if (this.y <= 0)
-            this.direcY = Math.floor(Math.random() * this.vel);
-        if (this.y + this.area * 2 >= this.screen.height)
-            this.direcY = Math.floor(-(Math.random() * this.vel));
-        if (this.x + this.area * 2 >= this.screen.width)
-            this.direcX = Math.floor(-(Math.random() * this.vel));
+        if (this.x <= 0) {
+            this.direcX = Math.floor((Math.random() * this.vel) + this.vel / 2);
+        }
+        if (this.y <= 0) {
+            this.direcY = Math.floor((Math.random() * this.vel) + this.vel / 2);
+        }
+        if (this.y + this.area * 2 >= this.screen.height) {
+            this.direcY = Math.floor(-((Math.random() * this.vel) + this.vel / 2));
+        }
+        if (this.x + this.area * 2 >= this.screen.width) {
+            this.direcX = Math.floor(-((Math.random() * this.vel) + this.vel / 2));
+        }
     }
     increaseVel() {
         const increase = setInterval(() => {
@@ -129,19 +133,30 @@ class ControllerGame {
     robot;
     elipse;
     constructor() {
-        this.play = new Character(30, 350, 30, 200, "blue", 15);
-        this.elipse = new Elipse(undefined, undefined, undefined, true, 1, 10000);
-        this.robot = new Character(1300, 350, 30, 200, "blue", 15);
+        this.play = new Character(10, 350, 30, 200, "blue", 15);
+        this.elipse = new Elipse(30, 15, undefined, true, 1, 10000);
+        this.robot = new Character(90, 350, 30, 200, "blue", 15);
     }
     reenderScreen() {
         this.play.ctx?.clearRect(0, 0, this.play.screen.width, this.play.screen.height);
         this.play.handleEvent();
-        this.robot.robotIA(this.elipse.y);
+        this.robot.robotIA(this.elipse.y - this.elipse.area);
         this.elipse.move();
         this.collision(this.play, this.elipse);
+        this.collision(this.robot, this.elipse, true);
         requestAnimationFrame(this.reenderScreen.bind(this));
     }
-    collision(play, enemy) {
+    collision(play, enemy, campRight = false) {
+        if (campRight) {
+            if (play.x < enemy.x + enemy.area * 2 && play.width + play.x > enemy.x && play.y < enemy.y && play.y + play.height > enemy.y) {
+                enemy.direcX *= -1;
+            }
+        }
+        else {
+            if (play.x < enemy.x && play.width + play.x > enemy.x && play.y < enemy.y + enemy.area && play.y + play.height > enemy.y) {
+                enemy.direcX = -enemy.direcX;
+            }
+        }
     }
 }
 const control = new ControllerGame();

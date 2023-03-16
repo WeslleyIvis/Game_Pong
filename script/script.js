@@ -84,6 +84,7 @@ class Elipse extends Canvas {
     time;
     incVel;
     aux;
+    placar;
     constructor(area = 50, vel = 20, color = "black", intervalIncrease = false, increaseVel = 5, time = 5000) {
         super();
         this.area = area;
@@ -96,6 +97,10 @@ class Elipse extends Canvas {
         this.direcX = Math.floor(Math.random() * this.vel);
         this.direcY = Math.floor(Math.random() * this.vel);
         this.aux = intervalIncrease;
+        this.placar = {
+            left: 0,
+            right: 0
+        };
     }
     write() {
         if (this.ctx instanceof CanvasRenderingContext2D) {
@@ -112,17 +117,19 @@ class Elipse extends Canvas {
         }
         this.x += this.direcX;
         this.y += this.direcY;
-        if (this.x <= 0) {
-            this.direcX = Math.floor((Math.random() * this.vel) + this.vel / 2);
+        if (this.x < 0) {
+            this.direcX = Math.floor((Math.random() * this.vel));
+            this.placar.left++;
         }
         if (this.y <= 0) {
-            this.direcY = Math.floor((Math.random() * this.vel) + this.vel / 2);
+            this.direcY = Math.floor((Math.random() * this.vel));
         }
         if (this.y + this.area * 2 >= this.screen.height) {
-            this.direcY = Math.floor(-((Math.random() * this.vel) + this.vel / 2));
+            this.direcY = Math.floor(-((Math.random() * this.vel)));
         }
         if (this.x + this.area * 2 >= this.screen.width) {
-            this.direcX = Math.floor(-((Math.random() * this.vel) + this.vel / 2));
+            this.direcX = Math.floor(-((Math.random() * this.vel)));
+            this.placar.right++;
         }
     }
     increaseVel() {
@@ -132,22 +139,59 @@ class Elipse extends Canvas {
         this.aux = false;
     }
 }
+class Menu {
+    element;
+    placar;
+    pLeft;
+    pRight;
+    constructor(menu) {
+        this.element = document.getElementById(menu);
+        this.placar = [];
+        this.pLeft = 0;
+        this.pRight = 0;
+    }
+    createValue() {
+        for (let x = 0; x < 2; x++) {
+            this.placar[x] = document.createElement('p');
+            this.placar[x].innerText = '0';
+            this.element?.children[x].appendChild(this.placar[x]);
+        }
+    }
+    incValue(pointLeft, pointRight) {
+        if (pointLeft > +this.placar[1].innerText) {
+            this.placar[1].innerText = pointLeft;
+        }
+        if (pointRight > +this.placar[0].innerText) {
+            this.placar[0].innerText = pointRight;
+        }
+    }
+}
 class ControllerGame {
     play;
+    play1;
     robot;
     elipse;
+    menu;
     constructor() {
         this.play = new Character(10, 350, 30, 200, "blue", 15);
+        this.play1 = new Character(90, 350, 30, 200, "blue", 15, ["w", "s"]);
         this.elipse = new Elipse(30, 15, undefined, false);
         this.robot = new Character(90, 350, 30, 200, "blue", 15);
+        this.menu = new Menu("informations");
+        this.menu.createValue();
+        console.log(this.play.x);
+        console.log(this.play.width);
+        console.log(this.play.y);
+        console.log(this.play.height);
     }
     reenderScreen() {
         this.play.ctx?.clearRect(0, 0, this.play.screen.width, this.play.screen.height);
         this.play.handleEvent();
-        this.robot.robotIA(this.elipse.y - this.elipse.area);
+        this.play1.handleEvent();
         this.elipse.move();
+        this.menu.incValue(this.elipse.placar.left, this.elipse.placar.right);
         this.collision(this.play, this.elipse);
-        this.collision(this.robot, this.elipse, true);
+        this.collision(this.play1, this.elipse, true);
         requestAnimationFrame(this.reenderScreen.bind(this));
     }
     collision(play, enemy, campRight = false) {

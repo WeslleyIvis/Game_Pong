@@ -1,18 +1,18 @@
-// const express = require('express');
-// const app = express();
+const express = require('express');
+const app = express();
 
-// const PORT = process.env.PORT || 3333;
-// const HOST = '192.168.15.9';
+const PORT = process.env.PORT || 3333;
+const HOST = '192.168.15.9';
 
-// app.use(express.static('../'));
+app.use(express.static('../'));
 
-// app.get('/', (req, res) => {
-//   res.sendFile(__dirname + '/index.html');
-// });
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
-// app.listen(PORT, HOST, () => {
-//   console.log(`Server running on ${HOST}:${PORT}`);
-// });
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on ${HOST}:${PORT}`);
+});
 
 const WebSocket = require('ws');
 

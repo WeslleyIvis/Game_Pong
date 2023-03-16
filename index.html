@@ -11,20 +11,44 @@
 <style>
     #screen {
         border: 1px solid #CCC;
-        /* image-rendering: pixelated;
+        image-rendering: pixelated;
         image-rendering: crisp-edges;
-        image-rendering: -moz-crisp-edges; */
+        image-rendering: -moz-crisp-edges;
+        width: 100%;
 
+    }
+
+    .content {
+        display: grid;
+        grid-template-columns: 1fr 500px;
+    }
+
+    #informations {
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        text-align: center;
     }
 </style>
 
 <body>
 
-    <canvas id="screen" width="1400px" height="900px">
-        <h3>Seu browser não possui suport ao canvas</h3>
-    </canvas>
+    <section class="content">
+        <canvas id="screen" width="200px" height="900px">
+            <h3>Seu browser não possui suport ao canvas</h3>
+        </canvas>
 
+        <section id="informations">
+            <div>
+                <h2>Player 1</h2>
+            </div>
 
+            <div>
+                <h2>Player 2</h2>
+            </div>
+
+        </section>
+    </section>
 
     <script type="module" src="script/script.js"></script>
 </body>

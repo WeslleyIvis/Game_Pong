@@ -17,8 +17,9 @@ class Character extends Canvas {
     x;
     y;
     vel;
+    control;
     movent;
-    constructor(x, y, width = 20, height = 20, color = '#CCC', vel = 2) {
+    constructor(x, y, width = 20, height = 20, color = '#CCC', vel = 2, control = ["ArrowUp", "ArrowDown"]) {
         super();
         this.width = width;
         this.height = height;
@@ -32,23 +33,26 @@ class Character extends Canvas {
             up: false,
             down: false,
         };
-        const a = true;
+        this.control = {
+            up: control[0],
+            down: control[1]
+        };
     }
     handleEvent() {
         this.write();
         window.addEventListener('keydown', ({ key }) => {
-            if (key == "ArrowUp") {
+            if (key == this.control.up) {
                 this.movent.up = true;
             }
-            else if (key == "ArrowDown") {
+            else if (key == this.control.down) {
                 this.movent.down = true;
             }
         });
         window.addEventListener('keyup', ({ key }) => {
-            if (key == "ArrowUp") {
+            if (key == this.control.up) {
                 this.movent.up = false;
             }
-            else if (key == "ArrowDown") {
+            else if (key == this.control.down) {
                 this.movent.down = false;
             }
         });
@@ -134,7 +138,7 @@ class ControllerGame {
     elipse;
     constructor() {
         this.play = new Character(10, 350, 30, 200, "blue", 15);
-        this.elipse = new Elipse(30, 15, undefined, true, 1, 10000);
+        this.elipse = new Elipse(30, 15, undefined, false);
         this.robot = new Character(90, 350, 30, 200, "blue", 15);
     }
     reenderScreen() {

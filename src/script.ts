@@ -17,13 +17,17 @@ class Character extends Canvas {
     x: number;
     y: number;
     vel: number;
+    control: {
+        up: string | undefined;
+        down: string | undefined;
+    }
     movent: {
         left: boolean;
         right: boolean;
         up: boolean;
         down: boolean;
     };
-    constructor(x:number, y:number, width:number = 20, height:number = 20, color:string = '#CCC', vel: number = 2) {
+    constructor(x:number, y:number, width:number = 20, height:number = 20, color:string = '#CCC', vel: number = 2, control: [string, string] = ["ArrowUp", "ArrowDown"]) {
         super()
         this.width = width;
         this.height = height;
@@ -36,8 +40,11 @@ class Character extends Canvas {
             right: false,
             up: false,
             down: false,
-        }
-        const a = true;
+        };
+        this.control = {
+            up: control[0],
+            down: control[1]
+        };
     }
 
     handleEvent() {
@@ -48,9 +55,9 @@ class Character extends Canvas {
             // } else if(key == "ArrowLeft") {
             //     this.movent.left = true;
             // } 
-            if(key == "ArrowUp") {
+            if(key == this.control.up) {
                 this.movent.up = true;
-            } else if(key == "ArrowDown") {
+            } else if(key == this.control.down) {
                 this.movent.down = true;
             }
         })
@@ -62,9 +69,9 @@ class Character extends Canvas {
             //     this.movent.left = false;
             // } 
 
-            if(key == "ArrowUp") {
+            if(key == this.control.up) {
                 this.movent.up = false;
-            } else if(key == "ArrowDown") {
+            } else if(key == this.control.down) {
                 this.movent.down = false;
             }
         })    
@@ -155,17 +162,20 @@ class Elipse extends Canvas {
 }
 class ControllerGame {
     play;
+
     robot;
     elipse;
     constructor() {
         this.play = new Character(10, 350, 30, 200, "blue", 15)
-        this.elipse = new Elipse(30, 15, undefined, true, 1, 10000);
+
+        this.elipse = new Elipse(30, 15, undefined, false);
         this.robot = new Character(90, 350, 30, 200, "blue", 15)  
     }   
 
     reenderScreen() {
         this.play.ctx?.clearRect(0, 0, (this.play.screen as HTMLCanvasElement).width, (this.play.screen as HTMLCanvasElement).height);
         this.play.handleEvent();
+       
         this.robot.robotIA(this.elipse.y - this.elipse.area);
         this.elipse.move();
         this.collision(this.play, this.elipse);

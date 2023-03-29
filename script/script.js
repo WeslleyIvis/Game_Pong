@@ -187,11 +187,11 @@ class ControllerGame {
     reenderScreen() {
         this.play.ctx?.clearRect(0, 0, this.play.screen.width, this.play.screen.height);
         this.play.handleEvent();
-        this.play1.handleEvent();
+        this.robot.robotIA(this.elipse.y - this.elipse.area);
         this.elipse.move();
         this.menu.incValue(this.elipse.placar.left, this.elipse.placar.right);
         this.collision(this.play, this.elipse);
-        this.collision(this.play1, this.elipse, true);
+        this.collision(this.robot, this.elipse, true);
         requestAnimationFrame(this.reenderScreen.bind(this));
     }
     collision(play, enemy, campRight = false) {

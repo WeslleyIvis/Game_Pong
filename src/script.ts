@@ -5,7 +5,7 @@ class Canvas {
     ctx;
     constructor(screen: string = "screen") {
         this.screen = document.getElementById("screen");
-        if(this.screen instanceof HTMLCanvasElement){
+        if(this.screen instanceof HTMLCanvasElement) {
             this.ctx = this.screen.getContext('2d');
         }
     }
@@ -141,18 +141,18 @@ class Elipse extends Canvas {
         this.write();
 
         if (this.aux) {
-            this.increaseVel()
+            this.increaseVel();
         }
         
         this.x += this.direcX;
         this.y += this.direcY;
 
         if(this.x < 0) {
-            this.direcX = Math.floor((Math.random() * this.vel)) 
-            this.placar.left++
+            this.direcX = Math.floor((Math.random() * this.vel));
+            this.placar.left++;
         } 
         if(this.y <= 0) {
-            this.direcY = Math.floor((Math.random() * this.vel))
+            this.direcY = Math.floor((Math.random() * this.vel));
         }
         if(this.y + this.area * 2 >= (this.screen as HTMLCanvasElement).height) {
             this.direcY = Math.floor(-((Math.random() * this.vel)));
@@ -166,7 +166,7 @@ class Elipse extends Canvas {
     increaseVel() {
         const increase = setInterval(() => {
             this.vel += this.incVel;
-        }, this.time);
+        }, this.time)
         this.aux = false;
     }
 }
@@ -223,13 +223,13 @@ class ControllerGame {
     reenderScreen() {
         this.play.ctx?.clearRect(0, 0, (this.play.screen as HTMLCanvasElement).width, (this.play.screen as HTMLCanvasElement).height);
         this.play.handleEvent();
-        this.play1.handleEvent();
-        //this.robot.robotIA(this.elipse.y - this.elipse.area);
+        //this.play1.handleEvent();
+        this.robot.robotIA(this.elipse.y - this.elipse.area);
         
         this.elipse.move();
         this.menu.incValue(this.elipse.placar.left, this.elipse.placar.right);
         this.collision(this.play, this.elipse);
-        this.collision(this.play1, this.elipse, true);
+        this.collision(this.robot, this.elipse, true);
         
         requestAnimationFrame(this.reenderScreen.bind(this));        
     }
@@ -237,11 +237,11 @@ class ControllerGame {
     collision(play: Character, enemy: Elipse, campRight: boolean = false) {
         if(campRight) {
             if(play.x < enemy.x + enemy.area * 2 && play.width + play.x > enemy.x && play.y < enemy.y && play.y + play.height > enemy.y) {
-                enemy.direcX *= -1 
+                enemy.direcX *= -1;
             }
         } else {
             if(play.x < enemy.x && play.width + play.x > enemy.x && play.y < enemy.y + enemy.area && play.y + play.height > enemy.y) {
-                enemy.direcX = -enemy.direcX
+                enemy.direcX = -enemy.direcX;
             }
         }        
     }
